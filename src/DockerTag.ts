@@ -15,6 +15,24 @@ export class DockerTag {
     this.tag = tag;
   }
 
+  public static compare(a: DockerTag, b: DockerTag) {
+    if (a.dateCreated < b.dateCreated) {
+      return -1;
+    }
+    if (b.dateCreated < a.dateCreated) {
+      return 1;
+    }
+
+    if (a.digest < b.digest) {
+      return -1;
+    }
+    if (b.digest < a.digest) {
+      return 1;
+    }
+
+    return 0;
+  }
+
   /**
    * Fetch object properties from Docker registry
    */
