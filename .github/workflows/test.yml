@@ -1,0 +1,16 @@
+name: Server Tests
+on:
+  push:
+    paths:
+      - ".github/workflows/test.yml"
+      - "src/**"
+
+jobs:
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm i
+      - run: npm t
