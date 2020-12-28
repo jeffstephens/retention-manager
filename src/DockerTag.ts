@@ -37,8 +37,6 @@ export class DockerTag {
    * Fetch object properties from Docker registry
    */
   async enrich() {
-    console.debug(`enriching ${this.repository}:${this.tag}...`);
-
     this.digest = await this.getDigest();
     this.dateCreated = await this.getCreateDate();
     return;
