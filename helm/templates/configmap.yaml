@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: retention-manager
+data:
+  config.yaml: |
+    registry: registry.example.com
+    policies:
+      - repository: my-image
+        maxTags: 5

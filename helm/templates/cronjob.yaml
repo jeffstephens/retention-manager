@@ -1,0 +1,31 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: retention-manager
+spec:
+  # sometime overnight in California
+  schedule: "11 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+          - name: config
+            configMap:
+              name: retention-manager
+              items:
+                - key: config.yaml
+                  path: config.yaml
+          containers:
+          - name: retention-manager
+            image: jeffstephens/retention-manager:1.0.0
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: CONFIG_PATH
+              value: /retention-manager/config.yaml
+              {{- include "helpers.list-secrets" . | indent 12 }}
+            volumeMounts:
+            - name: config
+              mountPath: /retention-manager
+              readOnly: true
