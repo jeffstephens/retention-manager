@@ -42,6 +42,28 @@ export class DockerTag {
     return;
   }
 
+  /**
+   * Delete the image's digest in the Docker registry
+   */
+  async delete() {
+    if (!this.digest) {
+      throw new Error("Digest not present; call enrich() first");
+    }
+
+    return axios.delete(
+      `https://${this.registry}/v2/${this.repository}/manifests/${this.digest}`,
+      {
+        auth: {
+          username: process.env.REGISTRY_USERNAME!,
+          password: process.env.REGISTRY_PASSWORD!,
+        },
+        headers: {
+          Accept: "application/vnd.docker.distribution.manifest.v2+json",
+        },
+      }
+    );
+  }
+
   private async getDigest(): Promise<string> {
     const response = await axios.head(
       `https://${this.registry}/v2/${this.repository}/manifests/${this.tag}`,

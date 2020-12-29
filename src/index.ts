@@ -2,6 +2,7 @@ import yaml from "js-yaml";
 import axios from "axios";
 import { readFileSync } from "fs";
 import { DockerTag } from "./DockerTag";
+import { getExpiredTags } from "./helpers/getExpiredTags";
 require("dotenv").config();
 
 const main = async () => {
@@ -70,28 +71,25 @@ const main = async () => {
 
         console.log(`Found ${tags.length} tags`);
 
-        if (policy.maxTags && tags.length <= policy.maxTags) {
-          console.log(`Tag count is under policy maximum; nothing to do!`);
-          return;
-        }
-
         // enrich with manifest data
         let enrichedTags: Array<DockerTag> = tags.map(
           (tag) => new DockerTag(config.registry, policy.repository, tag)
         );
         await Promise.all(enrichedTags.map((tag) => tag.enrich()));
 
-        // sort by date created
-        enrichedTags = enrichedTags.sort(DockerTag.compare);
-
         if (policy.maxTags) {
-          const overage = tags.length - policy.maxTags;
-          const tagsToDelete = enrichedTags.slice(0, overage);
+          const tagsToDelete = getExpiredTags(enrichedTags, policy.maxTags);
 
-          console.log(
-            `More tags present than policy allows; scheduling the following for deletion:`,
-            tagsToDelete.map((t) => `${t.tag} (${t.digest})`)
-          );
+          if (tagsToDelete.length > 0) {
+            console.log(
+              `More tags present than policy allows; scheduling the following for deletion:`,
+              tagsToDelete.map((t) => `${t.tag} (${t.digest})`)
+            );
+
+            await Promise.all(tagsToDelete.map((tag) => tag.delete()));
+          } else {
+            console.log(`Tag count is under policy limit; nothing to do!`);
+          }
         }
       })
     );
@@ -100,4 +98,4 @@ const main = async () => {
   }
 };
 
-main();
+main().then(() => console.log("Done!"));
