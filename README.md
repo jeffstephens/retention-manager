@@ -56,7 +56,7 @@ metadata:
   name: retention-manager
 spec:
   # sometime overnight in California
-  schedule: "11 * * * *"
+  schedule: "0 11 * * *"
   jobTemplate:
     spec:
       template:
