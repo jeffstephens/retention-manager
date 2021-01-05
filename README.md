@@ -71,7 +71,7 @@ spec:
                   path: config.yaml
           containers:
           - name: retention-manager
-            image: jeffstephens/retention-manager:1.0.0
+            image: jeffstephens/retention-manager:1.0.1
             imagePullPolicy: IfNotPresent
             env:
             - name: CONFIG_PATH
