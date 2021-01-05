@@ -1,6 +1,6 @@
 {
   "name": "retention-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Automatically delete old images in a private Docker registry according to rules in simple YAML.",
   "main": "dist/index.js",
   "scripts": {
