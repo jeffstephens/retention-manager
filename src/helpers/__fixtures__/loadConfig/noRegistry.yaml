@@ -1,0 +1,3 @@
+policies:
+  - repository: my-image
+    maxTags: 5
