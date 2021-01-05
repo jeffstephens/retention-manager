@@ -1,33 +1,19 @@
-import yaml from "js-yaml";
 import axios from "axios";
-import { readFileSync } from "fs";
 import { DockerTag } from "./DockerTag";
 import { getExpiredTags } from "./helpers/getExpiredTags";
+import loadConfig from "./helpers/loadConfig";
+
 require("dotenv").config();
 
 const main = async () => {
   try {
-    if (!process.env.CONFIG_PATH) {
-      throw new Error("CONFIG_PATH not found in env");
-    }
-
     if (!process.env.REGISTRY_USERNAME || !process.env.REGISTRY_PASSWORD) {
       throw new Error(
         "REGISTRY_USERNAME and REGISTRY_PASSWORD are required in env"
       );
     }
 
-    const config = yaml.safeLoad(
-      readFileSync(process.env.CONFIG_PATH, "utf8")
-    ) as YamlConfig;
-
-    if (!config.registry) {
-      throw new Error("Expected top-level key 'registry' but didn't find it");
-    }
-    if (!config.policies) {
-      throw new Error("Expected top-level key 'policies' but didn't find it");
-    }
-
+    const config = loadConfig();
     await Promise.all(
       config.policies.map(async (policy) => {
         if (!policy.repository) {

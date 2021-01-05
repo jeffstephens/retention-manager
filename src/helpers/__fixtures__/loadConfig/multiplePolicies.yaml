@@ -1,0 +1,8 @@
+registry: registry.example.com
+policies:
+  - repository: my-image
+    maxTags: 5
+  - repository: my-other-image
+    maxTags: 1
+  - repository: my-third-image
+    maxTags: 3
