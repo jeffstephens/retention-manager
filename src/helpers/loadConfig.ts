@@ -6,7 +6,7 @@ const loadConfig = (): YamlConfig => {
     throw new Error("CONFIG_PATH not found in env");
   }
 
-  const config = yaml.safeLoad(
+  const config = yaml.load(
     readFileSync(process.env.CONFIG_PATH, "utf8")
   ) as YamlConfig;
 
