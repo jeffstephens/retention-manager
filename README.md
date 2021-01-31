@@ -6,7 +6,17 @@
 
 Automatically delete old images in a private Docker registry according to rules in simple YAML. Useful for keeping small Docker registries from consuming too much disk space. Use at your own risk and make sure you can recreate any mission-critical images!
 
-Note: This doesn't actually free any disk space until you run Docker's garbage collection, which you should research and run separately. The main caveat is that if you run it while an image is being uploaded, it can corrupt the new image.
+### A Note on Garbage Collection
+
+This utility doesn't actually free any disk space until you run Docker's garbage collection, which you should research and run separately. The main caveat is that if you run it while an image is being uploaded, it can corrupt the new image.
+
+If you're running your registry in Kubernetes, here's an example script you could run on a cron job. (You might need substitute appropriate values for the namespace and configuration path.)
+
+```bash
+#!/bin/bash
+pod=$(kubectl get pods -n docker-registry | tail -n 1 | awk '{ print $1 }')
+kubectl exec -n docker-registry $pod -- bin/registry garbage-collect /etc/docker/registry/config.yml
+```
 
 ## Configuration
 
@@ -63,31 +73,31 @@ spec:
         spec:
           restartPolicy: OnFailure
           volumes:
-          - name: config
-            configMap:
-              name: retention-manager
-              items:
-                - key: config.yaml
-                  path: config.yaml
-          containers:
-          - name: retention-manager
-            image: jeffstephens/retention-manager:1.0.3
-            imagePullPolicy: IfNotPresent
-            env:
-            - name: CONFIG_PATH
-              value: /retention-manager/config.yaml
-            - name: REGISTRY_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: secret-env
-                  key: REGISTRY_PASSWORD
-            - name: REGISTRY_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: secret-env
-                  key: REGISTRY_USERNAME
-            volumeMounts:
             - name: config
-              mountPath: /retention-manager
-              readOnly: true
+              configMap:
+                name: retention-manager
+                items:
+                  - key: config.yaml
+                    path: config.yaml
+          containers:
+            - name: retention-manager
+              image: jeffstephens/retention-manager:1.0.3
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: CONFIG_PATH
+                  value: /retention-manager/config.yaml
+                - name: REGISTRY_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: secret-env
+                      key: REGISTRY_PASSWORD
+                - name: REGISTRY_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: secret-env
+                      key: REGISTRY_USERNAME
+              volumeMounts:
+                - name: config
+                  mountPath: /retention-manager
+                  readOnly: true
 ```
