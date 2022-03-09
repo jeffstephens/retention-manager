@@ -34,4 +34,25 @@ describe(".getExpiredTags", () => {
     const subject = [tagA, retagged, tagC];
     expect(getExpiredTags(subject, 2)).toEqual([]);
   });
+
+  it("should preserve all unique channels", () => {
+    const channelA = new DockerTag("reg", "repo", "A-production");
+    channelA.dateCreated = DateTime.utc().minus({ days: 5 });
+    channelA.digest = "digestA";
+
+    const channelB = new DockerTag("reg", "repo", "B-staging");
+    channelB.dateCreated = DateTime.utc().minus({ days: 4 });
+    channelB.digest = "digestB";
+
+    const channelC = new DockerTag("reg", "repo", "C-canary");
+    channelC.dateCreated = DateTime.utc().minus({ days: 3 });
+    channelC.digest = "digestC";
+
+    const channelD = new DockerTag("reg", "repo", "D-production");
+    channelD.dateCreated = DateTime.utc().minus({ days: 2 });
+    channelD.digest = "digestD";
+
+    const subject = [channelA, channelB, channelC, channelD];
+    expect(getExpiredTags(subject, 1, true)).toEqual([channelA]);
+  });
 });

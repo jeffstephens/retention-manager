@@ -27,9 +27,16 @@ registry: registry.example.com
 policies:
   - repository: my-image
     maxTags: 5
+    preserveChannels: true # optional
 ```
 
 The environmental variable `CONFIG_PATH` should point to this file on disk.
+
+### `preserveChannels` option
+
+This setting instructs retention-manager to make sure at least image per "channel" is preserved. In the tag `1.1.0-staging`, the channel name is "staging".
+
+This enables a deployment pattern that works well with [Keel](https://keel.sh/) for building images on different code branches, for example.
 
 ## Example: Kubernetes CronJob
 

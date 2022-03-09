@@ -17,13 +17,14 @@ const main = async () => {
 
     for (let i = 0; i < config.policies.length; i++) {
       const policy = config.policies[i];
+      const preserveChannels = !!policy.preserveChannels;
 
       if (!policy.repository) {
         throw new Error("Expected repository in policy but didn't find it");
       }
 
       console.log(
-        `=== Checking repository ${policy.repository} (maxTags ${policy.maxTags})...`
+        `=== Checking repository ${policy.repository} (maxTags ${policy.maxTags}, preserveChannels ${preserveChannels})...`
       );
 
       // get list of tags
@@ -66,7 +67,11 @@ const main = async () => {
       await Promise.all(enrichedTags.map((tag) => tag.enrich()));
 
       if (policy.maxTags) {
-        const tagsToDelete = getExpiredTags(enrichedTags, policy.maxTags);
+        const tagsToDelete = getExpiredTags(
+          enrichedTags,
+          policy.maxTags,
+          preserveChannels
+        );
 
         if (tagsToDelete.length > 0) {
           console.log(
