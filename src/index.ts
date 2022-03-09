@@ -46,7 +46,7 @@ const main = async () => {
         data.tags.forEach((tag: string) => {
           tags.push(tag);
         });
-      } catch (err) {
+      } catch (err: any) {
         if (err.response) {
           const firstError = err.response.data.errors.pop();
           throw new Error(
@@ -80,7 +80,7 @@ const main = async () => {
         }
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error(`Error: ${err.message}`);
   }
 };

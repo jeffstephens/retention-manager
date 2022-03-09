@@ -1,18 +1,18 @@
-FROM node:15.6.0-alpine3.11 as builder
+FROM node:gallium-alpine3.14 as builder
 WORKDIR /app
 
 COPY ["package.json", "package-lock.json", "tsconfig.json", "./"]
-RUN npm install
+RUN npm ci
 
 COPY ./src/ ./src
 RUN npm run build
 
-FROM node:15.6.0-alpine3.11
+FROM node:gallium-alpine3.14
 WORKDIR /app
 ENV NODE_ENV production
 
 COPY --from=builder ["/app/package*", "./"]
-RUN npm install
+RUN npm ci
 
 COPY --from=builder ["/app/dist/", "./dist/"]
 CMD npm run run-prod
