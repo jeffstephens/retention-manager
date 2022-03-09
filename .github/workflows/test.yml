@@ -4,6 +4,7 @@ on:
     paths:
       - ".github/workflows/test.yml"
       - "src/**"
+      - "package-lock.json"
 
 jobs:
   test:
