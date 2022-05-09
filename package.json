@@ -27,7 +27,7 @@
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "js-yaml": "^4.0.0",
-    "luxon": "^1.25.0"
+    "luxon": "^2.4.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
