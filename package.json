@@ -25,7 +25,7 @@
   "homepage": "https://github.com/jeffstephens/retention-manager#readme",
   "dependencies": {
     "axios": "^0.21.1",
-    "dotenv": "^8.2.0",
+    "dotenv": "^16.0.1",
     "js-yaml": "^4.0.0",
     "luxon": "^1.25.0"
   },
